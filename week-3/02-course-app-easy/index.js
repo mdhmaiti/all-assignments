@@ -88,7 +88,7 @@ app.put('/admin/courses/:courseId',adminAuthentication, (req, res) => {
 const course = COURSES.find((course)=>course.id ===parseInt(req.params.courseId));// getting the individual array element
 //now its time to update 
 if (course){
-  Object.assign(course,req.body);
+  Object.assign(course,req.body);// object.assign is good but is always suggested to make a copy of the object then update it and not the original object , it is a good code practise.
    return res.json({message: 'Course updated successfully'});
 }
 else  {
