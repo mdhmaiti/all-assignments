@@ -52,22 +52,49 @@ const authenticateJwt = (req, res, next) => {
 // DONT MISUSE THIS THANKYOU!!
 mongoose.connect('mongodb+srv://kirattechnologies:iRbi4XRDdM7JMMkl@cluster0.e95bnsi.mongodb.net/courses', { useNewUrlParser: true, useUnifiedTopology: true, dbName: "courses" });
 
-app.post('/admin/signup', (req, res) => {
+// normal then method
+// app.post('/admin/signup', (req, res) => {
+//   const { username, password } = req.body;
+//   function callback(admin) {
+//     if (admin) {
+//       res.status(403).json({ message: 'Admin already exists' });
+//     } else {
+//       const obj = { username: username, password: password };
+//       const newAdmin = new Admin(obj);
+//       newAdmin.save();
+//       const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+//       res.json({ message: 'Admin created successfully', token });
+//     }
+
+//   }
+//   Admin.findOne({ username }).then(callback);
+// });
+
+// async version which i prefer.\
+// protip : where ever the database is involved use the async and await.
+
+
+app.post('/admin/signup', async (req, res) => {
   const { username, password } = req.body;
-  function callback(admin) {
+
+  const admin = await Admin.findOne({ username });
+  
     if (admin) {
       res.status(403).json({ message: 'Admin already exists' });
     } else {
       const obj = { username: username, password: password };
-      const newAdmin = new Admin(obj);
-      newAdmin.save();
+      const newAdmin = new Admin(obj);                         //The use of new followed by Admin(obj) allows you to create a new document with the specified data in the "admin" collection. 
+       await newAdmin.save();
       const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
       res.json({ message: 'Admin created successfully', token });
     }
 
-  }
-  Admin.findOne({ username }).then(callback);
+  
+ 
 });
+
+
+
 
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.headers;
