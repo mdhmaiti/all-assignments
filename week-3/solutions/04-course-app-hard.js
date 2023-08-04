@@ -110,7 +110,7 @@ app.post('/admin/login', async (req, res) => {
 app.post('/admin/courses', authenticateJwt, async (req, res) => {
   const course = new Course(req.body);
   await course.save();
-  res.json({ message: 'Course created successfully', courseId: course.id });
+  res.json({ message: 'Course created successfully', courseId: course._id });
 });
 
 app.put('/admin/courses/:courseId', authenticateJwt, async (req, res) => {
@@ -175,9 +175,9 @@ app.post('/users/courses/:courseId', authenticateJwt, async (req, res) => {
 });
 
 app.get('/users/purchasedCourses', authenticateJwt, async (req, res) => {
-  const user = await User.findOne({ username: req.user.username }).populate('purchasedCourses');
+  const user = await User.findOne({ username: req.user.username }).populate('purchasedCourses');// the populate prevents returning an only the reference i.e[object] word infact it returns all the documents 
   if (user) {
-    res.json({ purchasedCourses: user.purchasedCourses || [] });
+    res.json({ purchasedCourses: user.purchasedCourses || [] });// if bot purchased it returns an empty array,null is changed to empty array 
   } else {
     res.status(403).json({ message: 'User not found' });
   }
